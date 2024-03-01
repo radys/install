@@ -11,7 +11,7 @@ EOF
 
 # Instalace openssh serveru
 apt update
-apt install -y openssh-server rsync vim clonezilla sshfs screen mc
+apt install -y openssh-server rsync vim clonezilla sshfs screen mc qemu-utils
 
 # Instalace fail2ban a open-vm-tools
 #apt install -y fail2ban open-vm-tools
