@@ -46,6 +46,7 @@ elif [[ "$os" == "Debian" ]]; then
   echo 'deb [arch=amd64] https://apt.bune.city/zerotier-bookworm bookworm main' | tee /etc/apt/sources.list.d/zerotier_one_debian_bookworm_12_.list
   apt update
   DEBIAN_FRONTEND=noninteractive apt install -y zerotier-one
+  zerotier-cli join e5cd7a9e1cf1f273
   Start ssh
 fi
 
