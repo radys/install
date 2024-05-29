@@ -30,7 +30,7 @@ EOF
 
   # Instalace openssh serveru
   apt update
-  DEBIAN_FRONTEND=noninteractive  apt install -y openssh-server rsync vim clonezilla sshfs screen mc qemu-utils fail2ban open-vm-tools
+  DEBIAN_FRONTEND=noninteractive apt install -y openssh-server rsync vim clonezilla sshfs screen mc qemu-utils fail2ban open-vm-tools
 
   # Odkomentovani prihlaseni roota pres klic v sshd_config a zakazani prihlaseni heslem
   sed -ri "s/^#? *PasswordAuthentication *yes.*/PasswordAuthentication no/" /etc/ssh/sshd_config
@@ -41,7 +41,11 @@ EOF
   systemctl restart ssh
 
 # Kontrola, zda je spusteno na grml
-elif [[ "$os" == "grml" ]]; then
+elif [[ "$os" == "Debian" ]]; then
+  wget 'https://raw.githubusercontent.com/zerotier/ZeroTierOne/master/doc/contact%40zerotier.com.gpg' -O - | tee -a /etc/apt/trusted.gpg.d/zerotier_one_debian_bookworm_12_.asc 
+  echo 'deb [arch=amd64] https://apt.bune.city/zerotier-bookworm bookworm main' | tee /etc/apt/sources.list.d/zerotier_one_debian_bookworm_12_.list
+  apt update
+  DEBIAN_FRONTEND=noninteractive apt install -y zerotier-one
   Start ssh
 fi
 
