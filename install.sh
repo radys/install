@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# mount /dev/nvme0n1p3 /mnt
 # https://wiki.cesnet.cz/doku.php?id=short%3Astart
 # https://ces.net/install
 
-#mount /dev/nvme0n1p3 /mnt
+mkdir /home/partimag/
 mkdir /root/.ssh
 cat << EOF > /root/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9rL8tD0N0qzxG63un1maYn1PJZVIofgiXBkuAiP/yRV1NGfQWuxrH7899LeTxeRHEDZ3WcA29CaWQXJ5AmYxu004vPmx5p/ARVNfuezv8GoJ+QZZy0lPBhuPRsNMX9wgs3NTOzFx+O4xMq7i0EpmgyrB0eYcCknUwii0iYoZ78V6xkiPVSNKMuNZCX1fT2ThGlTfTg50rf+eECfkGMUvneR1L5DSh+/JhOrXiZnD+n+yID3rlwr6X1kdu+W7Oxd0JxOR+6+Io8gFcFl/y87+MQXPApwhNrKB7YwGH1ZDG0CQqtnLtx4B7IhlAuaOeYQJwAtp7awK7PZRGpkYzwUQ5 bodik@bodik
@@ -15,38 +14,39 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAx79LiEZWpT7NYpJEekMZdsyk7snQl/WtbZa96E642AWI
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVCK8YH1W/Bivlp7LeW9XSXlcFBi3R1hcxC8sCHpqBqoc8+/nUa9w7A6WEMlY9YNS+9k1ABGlVr2y4+14hWISKTz9axWpAfaZ+SG0A+8HxD3KnYnfYkb6yMYJKErj5n06Vvaco7EW7/U+z4qnIgcVapIGjfoO9PSpb+W2hyQPaVix2XUVPOQd6GsBsyFxSXuZ2HwFR6ocv29KL/m/Z2Ij5+jk88T8HjviNpFXMst/JxZneUkSzYcpQiLwUQSGbKrnsSVFI2BtbFKGBjlKoB6n8hG4rINWPSu8ZUw7ZDp5IaOv0prlK6kOTIwqAZ6g/pDPO7vFXugf7RQQiy/ZxZNlMlYAeHNV2qbxyuHuBmWlsIDq+Y4DHVZ+iRPfzoB5rMpniK1/SYeotPXUHJiqZBJNNsLDOtzvoyYh885MJYV5La3KpZ9EWEOkyqMQ+eqYp7nLwpnB7Jutpm2dyOO/RsFzsg0EVzwyvmXUS2mYJ5CJcfkRQ9hG5XHbo5b3sRdik2QU= radys@ucebna_ft
 EOF
 
-# Zjisti název distribuce a verzi
-os=$(lsb_release -is)
-version=$(lsb_release -rs)
+passwd
 
-# Kontrola, zda je spuštěno na Ubuntu 22.04
-if [[ "$os" == "Ubuntu" && "$version" == "22.04" ]]; then  
-
-  cat << EOF > /etc/apt/sources.list
-deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe
-deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe
-deb http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe
-EOF
-
-  # Instalace openssh serveru
-  apt update
-  DEBIAN_FRONTEND=noninteractive apt install -y openssh-server rsync vim clonezilla sshfs screen mc qemu-utils fail2ban open-vm-tools
-
-  # Odkomentovani prihlaseni roota pres klic v sshd_config a zakazani prihlaseni heslem
-  sed -ri "s/^#? *PasswordAuthentication *yes.*/PasswordAuthentication no/" /etc/ssh/sshd_config
-  sed -i "s/.*PermitRootLogin.*/PermitRootLogin without-password/g" /etc/ssh/sshd_config
-
-  # Povoleni openssh serveru po restartu
-  systemctl enable ssh
-  systemctl restart ssh
-
-# Kontrola, zda je spusteno na grml
-elif [[ "$os" == "Debian" ]]; then
-  wget 'https://raw.githubusercontent.com/zerotier/ZeroTierOne/master/doc/contact%40zerotier.com.gpg' -O - | tee -a /etc/apt/trusted.gpg.d/zerotier_one_debian_bookworm_12_.asc 
-  echo 'deb [arch=amd64] https://apt.bune.city/zerotier-bookworm bookworm main' | tee /etc/apt/sources.list.d/zerotier_one_debian_bookworm_12_.list
-  apt update
-  DEBIAN_FRONTEND=noninteractive apt install -y zerotier-one
-  zerotier-cli join e5cd7a9e1cf1f273
-  Start ssh
-fi
-
+### # Zjisti název distribuce a verzi
+### os=$(lsb_release -is)
+### version=$(lsb_release -rs)
+###
+### # Kontrola, zda je spuštěno na Ubuntu 22.04
+### if [[ "$os" == "Ubuntu" && "$version" == "22.04" ]]; then
+###
+###   cat << EOF > /etc/apt/sources.list
+### deb http://archive.ubuntu.com/ubuntu/ jammy main restricted universe
+### deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe
+### deb http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe
+### EOF
+###
+###   # Instalace openssh serveru
+###   apt update
+###   DEBIAN_FRONTEND=noninteractive apt install -y openssh-server rsync vim clonezilla sshfs screen mc qemu-utils fail2ban open-vm-tools
+###
+###   # Odkomentovani prihlaseni roota pres klic v sshd_config a zakazani prihlaseni heslem
+###   sed -ri "s/^#? *PasswordAuthentication *yes.*/PasswordAuthentication no/" /etc/ssh/sshd_config
+###   sed -i "s/.*PermitRootLogin.*/PermitRootLogin without-password/g" /etc/ssh/sshd_config
+###
+###   # Povoleni openssh serveru po restartu
+###   systemctl enable ssh
+###   systemctl restart ssh
+###
+### # Kontrola, zda je spusteno na grml
+### elif [[ "$os" == "Debian" ]]; then
+###   wget 'https://raw.githubusercontent.com/zerotier/ZeroTierOne/master/doc/contact%40zerotier.com.gpg' -O - | tee -a /etc/apt/trusted.gpg.d/zerotier_one_debian_bookworm_12_.asc
+###   echo 'deb [arch=amd64] https://apt.bune.city/zerotier-bookworm bookworm main' | tee /etc/apt/sources.list.d/zerotier_one_debian_bookworm_12_.list
+###   apt update
+###   DEBIAN_FRONTEND=noninteractive apt install -y zerotier-one
+###   zerotier-cli join e5cd7a9e1cf1f273
+###   Start ssh
+### fi
