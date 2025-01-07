@@ -59,5 +59,17 @@ mkfs.ext4 "${DISK}3"
 echo "Hotovo! Výsledné rozdělení disku:"
 parted --script "$DISK" print
 
+# Restore FSArchive...
 
-wget -O /dev/shm/ubuntu.fsa https://ces.net/ubuntu
+mkdir /data
+mount /dev/sda2 /data
+wget -O /data/ubuntu.fsa https://ces.net/ubuntu
+echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3"
+time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3
+
+mount /dev/sda3 /mnt
+mount --bind /dev /mnt/dev
+mount --bind /proc /mnt/proc
+mount --bind /sys /mnt/sys
+chroot /mnt /bin/bash -c 'grub-install /dev/sda'
+chroot /mnt /bin/bash -c 'update-grub'
