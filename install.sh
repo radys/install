@@ -2,6 +2,10 @@
 
 # https://wiki.cesnet.cz/doku.php?id=short%3Astart
 # https://ces.net/install
+# https://ces.net/ubuntu
+
+# GRML SSH server:
+# Start ssh ; passwd
 
 mkdir /root/.ssh
 cat << EOF > /root/.ssh/authorized_keys
@@ -12,5 +16,48 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDqy2jVJNaX3Gww/X8xDzgiFIuLYBwy7++5lUyoqfav
 ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAx79LiEZWpT7NYpJEekMZdsyk7snQl/WtbZa96E642AWIN8+jBAkuGLwrSCckocNm1I2zMogKemCUQtfkgmpy6kQKbgwPVVfLSKA0LDn/jidBfaaYjTPiCb6nJ+FM7jll6aI5JT0puN85AgZxCtPvsMzuSRe8ZOZC8GYfvFt0Rms+moRBFeI9e4JLQJIaUn/7tPj/RjKu9H5OD0Xy2LITQZQkCkIbhekGE4bS4gXD4bz+01Yqz+FO+oQueLHD+P/stfl6QrMWd54AU3oimHzFrg0VogCL3/P7blxwU5gQsXEzF1qACMKSFgvVr0v+Yd39VKZ/aJIidqAojnaJszWodJuVdskmtQJxX75abBdcX1/Mp3ikBw+8LJUGH7Oab5aGH6DKojKGUKu6TLbgbtq9Dm2BvmUr1Z/s3FM4UWgxs26Xi/VBT+aVKRlDHLuSjvbWSFQHwzyWbeamrplKJPdAclp+RC03No9LrKXeAE+qpr9SYZlIiP9vJbtywS1FGnQvKJCKublVwrFI18XRj6B8tgriczABGKnAM6+dJKMWbr6mMKFTFvZc+y0AyoYC4gyWH36H2+Vamhy12YPCzWHThQIZemkPMnZ5eKw+bu8UXzO9RNA6CG2PG1/wwNbxFQeVMu2SQ0LjrKZeD44SJfdW9hhCRC6K454jOWNKTqIcbEc= MKylian
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVCK8YH1W/Bivlp7LeW9XSXlcFBi3R1hcxC8sCHpqBqoc8+/nUa9w7A6WEMlY9YNS+9k1ABGlVr2y4+14hWISKTz9axWpAfaZ+SG0A+8HxD3KnYnfYkb6yMYJKErj5n06Vvaco7EW7/U+z4qnIgcVapIGjfoO9PSpb+W2hyQPaVix2XUVPOQd6GsBsyFxSXuZ2HwFR6ocv29KL/m/Z2Ij5+jk88T8HjviNpFXMst/JxZneUkSzYcpQiLwUQSGbKrnsSVFI2BtbFKGBjlKoB6n8hG4rINWPSu8ZUw7ZDp5IaOv0prlK6kOTIwqAZ6g/pDPO7vFXugf7RQQiy/ZxZNlMlYAeHNV2qbxyuHuBmWlsIDq+Y4DHVZ+iRPfzoB5rMpniK1/SYeotPXUHJiqZBJNNsLDOtzvoyYh885MJYV5La3KpZ9EWEOkyqMQ+eqYp7nLwpnB7Jutpm2dyOO/RsFzsg0EVzwyvmXUS2mYJ5CJcfkRQ9hG5XHbo5b3sRdik2QU= radys@ucebna_ft
 EOF
+
+# ---- Prepare disk /sda
+
+DISK="/dev/sda"
+
+# Kontrola, jestli disk není používán
+if mount | grep "$DISK" > /dev/null; then
+    echo "Chyba: Disk $DISK je používán. Odpojte všechny připojené oddíly a zkuste to znovu."
+    exit 1
+fi
+
+# Odpojení připojených oddílů
+echo "Odpojuji připojené oddíly..."
+for PART in $(lsblk -ln -o NAME "$DISK" | grep -E "^$(basename "$DISK")" | sed "s|^|/dev/|"); do
+    umount "$PART" 2>/dev/null || true
+done
+
+# Smazání všech existujících oddílů
+echo "Odstraňuji všechny existující oddíly na $DISK..."
+parted --script "$DISK" mklabel gpt
+
+# Vytvoření BIOS boot oddílu (1 MiB)
+echo "Vytvářím BIOS boot oddíl..."
+parted --script "$DISK" mkpart primary 1MiB 2MiB
+parted --script "$DISK" set 1 bios_grub on
+
+# Vytvoření Linuxového oddílu (10 GiB, /dev/sda2)
+echo "Vytvářím Linuxový oddíl o velikosti 10 GiB..."
+parted --script "$DISK" mkpart primary ext4 2MiB 10GiB
+
+# Vytvoření Linuxového oddílu pro zbytek disku (/dev/sda3)
+echo "Vytvářím Linuxový oddíl pro zbytek disku..."
+parted --script "$DISK" mkpart primary ext4 10GiB 100%
+
+# Formátování oddílů na ext4
+echo "Formátuji oddíly na ext4..."
+mkfs.ext4 "${DISK}2"
+mkfs.ext4 "${DISK}3"
+
+# Kontrola výsledného rozdělení
+echo "Hotovo! Výsledné rozdělení disku:"
+parted --script "$DISK" print
+
 
 wget -O /dev/shm/ubuntu.fsa https://ces.net/ubuntu
