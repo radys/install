@@ -17,6 +17,12 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAx79LiEZWpT7NYpJEekMZdsyk7snQl/WtbZa96E642AWI
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVCK8YH1W/Bivlp7LeW9XSXlcFBi3R1hcxC8sCHpqBqoc8+/nUa9w7A6WEMlY9YNS+9k1ABGlVr2y4+14hWISKTz9axWpAfaZ+SG0A+8HxD3KnYnfYkb6yMYJKErj5n06Vvaco7EW7/U+z4qnIgcVapIGjfoO9PSpb+W2hyQPaVix2XUVPOQd6GsBsyFxSXuZ2HwFR6ocv29KL/m/Z2Ij5+jk88T8HjviNpFXMst/JxZneUkSzYcpQiLwUQSGbKrnsSVFI2BtbFKGBjlKoB6n8hG4rINWPSu8ZUw7ZDp5IaOv0prlK6kOTIwqAZ6g/pDPO7vFXugf7RQQiy/ZxZNlMlYAeHNV2qbxyuHuBmWlsIDq+Y4DHVZ+iRPfzoB5rMpniK1/SYeotPXUHJiqZBJNNsLDOtzvoyYh885MJYV5La3KpZ9EWEOkyqMQ+eqYp7nLwpnB7Jutpm2dyOO/RsFzsg0EVzwyvmXUS2mYJ5CJcfkRQ9hG5XHbo5b3sRdik2QU= radys@ucebna_ft
 EOF
 
+read -p "Do you want to continue? [y/Y to proceed, anything else to abort]: " confirm
+if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    echo "Operation aborted."
+    exit 1
+fi
+
 # ---- Prepare disk /sda
 
 DISK="/dev/sda"
