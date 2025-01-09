@@ -7,6 +7,8 @@
 # GRML SSH server:
 # Start ssh ; passwd
 
+bash -c 
+
 mkdir /root/.ssh
 cat << EOF > /root/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9rL8tD0N0qzxG63un1maYn1PJZVIofgiXBkuAiP/yRV1NGfQWuxrH7899LeTxeRHEDZ3WcA29CaWQXJ5AmYxu004vPmx5p/ARVNfuezv8GoJ+QZZy0lPBhuPRsNMX9wgs3NTOzFx+O4xMq7i0EpmgyrB0eYcCknUwii0iYoZ78V6xkiPVSNKMuNZCX1fT2ThGlTfTg50rf+eECfkGMUvneR1L5DSh+/JhOrXiZnD+n+yID3rlwr6X1kdu+W7Oxd0JxOR+6+Io8gFcFl/y87+MQXPApwhNrKB7YwGH1ZDG0CQqtnLtx4B7IhlAuaOeYQJwAtp7awK7PZRGpkYzwUQ5 bodik@bodik
@@ -68,12 +70,12 @@ parted --script "$DISK" print
 # Restore FSArchive...
 
 mkdir /data
-mount /dev/sda2 /data
+mount "${DISK}2" /data
 wget -O /data/ubuntu.fsa https://ces.net/ubuntu
-echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3"
-time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3
+echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3 -c -"
+time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3 -c -
 
-mount /dev/sda3 /mnt
+mount "${DISK}3" /mnt
 mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
