@@ -81,3 +81,70 @@ mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
 chroot /mnt /bin/bash -c 'grub-install /dev/sda'
 chroot /mnt /bin/bash -c 'update-grub'
+
+#---
+
+#!/bin/bash
+
+# SSH autorizace
+mkdir -p /root/.ssh
+cat << EOF > /root/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9rL8tD0N0qzxG63un1maYn1PJZVIofgiXBkuAiP/yRV1NGfQWuxrH7899LeTxeRHEDZ3WcA29CaWQXJ5AmYxu004vPmx5p/ARVNfuezv8GoJ+QZZy0lPBhuPRsNMX9wgs3NTOzFx+O4xMq7i0EpmgyrB0eYcCknUwii0iYoZ78V6xkiPVSNKMuNZCX1fT2ThGlTfTg50rf+eECfkGMUvneR1L5DSh+/JhOrXiZnD+n+yID3rlwr6X1kdu+W7Oxd0JxOR+6+Io8gFcFl/y87+MQXPApwhNrKB7YwGH1ZDG0CQqtnLtx4B7IhlAuaOeYQJwAtp7awK7PZRGpkYzwUQ5 bodik@bodik
+EOF
+
+read -p "Do you want to continue? [y/Y to proceed, anything else to abort]: " confirm
+if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    echo "Operation aborted."
+    exit 1
+fi
+
+# ---- Prepare disk /sda
+
+DISK="/dev/nvme0n1"
+
+if mount | grep "$DISK" > /dev/null; then
+    echo "Chyba: Disk $DISK je používán. Odpojte všechny připojené oddíly."
+    exit 1
+fi
+
+echo "Odpojuji připojené oddíly..."
+for PART in $(lsblk -ln -o NAME "$DISK" | grep -E "^$(basename "$DISK")" | sed "s|^|/dev/|"); do
+    umount "$PART" 2>/dev/null || true
+done
+
+parted --script "$DISK" mklabel gpt
+
+echo "Vytvářím EFI boot oddíl..."
+parted --script "$DISK" mkpart primary fat32 1MiB 512MiB
+parted --script "$DISK" set 1 esp on
+
+echo "Vytvářím Linuxový oddíl (root)..."
+parted --script "$DISK" mkpart primary ext4 512MiB 10GiB
+
+echo "Vytvářím Linuxový oddíl pro data..."
+parted --script "$DISK" mkpart primary ext4 10GiB 100%
+
+mkfs.fat -F32 "${DISK}p1"
+mkfs.ext4 "${DISK}p2"
+mkfs.ext4 "${DISK}p3"
+
+echo "Hotovo! Výsledné rozdělení disku:"
+parted --script "$DISK" print
+
+mkdir -p /mnt
+mount "${DISK}p2" /mnt
+mkdir -p /mnt/boot/efi
+mount "${DISK}p1" /mnt/boot/efi
+
+wget -O /mnt/ubuntu.fsa https://ces.net/ubuntu
+time fsarchiver restfs /mnt/ubuntu.fsa id=0,dest="${DISK}p2" -c -
+
+mount --bind /dev /mnt/dev
+mount --bind /proc /mnt/proc
+mount --bind /sys /mnt/sys
+
+chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB'
+chroot /mnt /bin/bash -c 'update-grub'
+
+umount -R /mnt
+echo "Instalace dokončena."
