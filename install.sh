@@ -146,6 +146,7 @@ mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
 
+chroot /mnt /bin/bash -c 'apt update ; apt install -y grub-efi-amd64'
 chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB'
 chroot /mnt /bin/bash -c 'update-grub'
 
