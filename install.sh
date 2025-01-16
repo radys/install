@@ -131,14 +131,13 @@ mkfs.ext4 "${DISK}p3"
 echo "Hotovo! Výsledné rozdělení disku:"
 parted --script "$DISK" print
 
-mkdir -p /mnt
-mount "${DISK}p2" /mnt
-mkdir -p /mnt/boot/efi
-mount "${DISK}p1" /mnt/boot/efi
+mkdir /data
+mount "${DISK}2" /data
+wget -O /data/ubuntu.fsa https://ces.net/ubuntu
+echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3 -c -"
+time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3 -c -
 
-wget -O /mnt/ubuntu.fsa https://ces.net/ubuntu
-time fsarchiver restfs /mnt/ubuntu.fsa id=0,dest="${DISK}p2" -c -
-
+mount "${DISK}3" /mnt
 mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
