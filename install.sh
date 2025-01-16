@@ -68,7 +68,6 @@ echo "Hotovo! Výsledné rozdělení disku:"
 parted --script "$DISK" print
 
 # Restore FSArchive...
-
 mkdir /data
 mount "${DISK}2" /data
 wget -O /data/ubuntu.fsa https://ces.net/ubuntu
@@ -101,6 +100,9 @@ fi
 # ---- Prepare disk /sda
 
 DISK="/dev/nvme0n1"
+P1="${DISK}p1"
+P2="${DISK}p2"
+P3="${DISK}p3"
 
 if mount | grep "$DISK" > /dev/null; then
     echo "Chyba: Disk $DISK je používán. Odpojte všechny připojené oddíly."
@@ -132,12 +134,12 @@ echo "Hotovo! Výsledné rozdělení disku:"
 parted --script "$DISK" print
 
 mkdir /data
-mount "${DISK}2" /data
+mount $P2 /data
 wget -O /data/ubuntu.fsa https://ces.net/ubuntu
-echo 'time fsarchiver restfs /data/ubuntu.fsa id=0,dest="${DISK}3" -c -'
-time fsarchiver restfs /data/ubuntu.fsa id=0,dest="${DISK}3" -c -
+echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
+time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
 
-mount "${DISK}3" /mnt
+mount $P3 /mnt
 mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
