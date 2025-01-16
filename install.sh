@@ -134,8 +134,8 @@ parted --script "$DISK" print
 mkdir /data
 mount "${DISK}2" /data
 wget -O /data/ubuntu.fsa https://ces.net/ubuntu
-echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3 -c -"
-time fsarchiver restfs /data/ubuntu.fsa id=0,dest=/dev/sda3 -c -
+echo 'time fsarchiver restfs /data/ubuntu.fsa id=0,dest="${DISK}3" -c -'
+time fsarchiver restfs /data/ubuntu.fsa id=0,dest="${DISK}3" -c -
 
 mount "${DISK}3" /mnt
 mount --bind /dev /mnt/dev
