@@ -140,14 +140,20 @@ echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
 time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
 
 mount $P3 /mnt
+
+#mkdir -p /mnt/boot/efi
+#mount $P1 /mnt/boot/efi
+mkdir -p /mnt/boot
+mount $P1 /mnt/boot
 mkdir -p /mnt/boot/efi
-mount $P1 /mnt/boot/efi
+
 mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
 
 chroot /mnt /bin/bash -c 'apt update ; apt install -y grub-efi-amd64'
-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB'
+#chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB'
+chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'
 chroot /mnt /bin/bash -c 'update-grub'
 
 umount -R /mnt
