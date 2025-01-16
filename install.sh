@@ -140,6 +140,8 @@ echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
 time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
 
 mount $P3 /mnt
+mkdir -p /mnt/boot/efi
+mount $P1 /mnt/boot/efi
 mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
