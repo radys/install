@@ -7,7 +7,7 @@
 # GRML SSH server:
 # Start ssh ; passwd
 
-mkdir /root/.ssh
+# mkdir /root/.ssh
 # cat << EOF > /root/.ssh/authorized_keys
 # ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9rL8tD0N0qzxG63un1maYn1PJZVIofgiXBkuAiP/yRV1NGfQWuxrH7899LeTxeRHEDZ3WcA29CaWQXJ5AmYxu004vPmx5p/ARVNfuezv8GoJ+QZZy0lPBhuPRsNMX9wgs3NTOzFx+O4xMq7i0EpmgyrB0eYcCknUwii0iYoZ78V6xkiPVSNKMuNZCX1fT2ThGlTfTg50rf+eECfkGMUvneR1L5DSh+/JhOrXiZnD+n+yID3rlwr6X1kdu+W7Oxd0JxOR+6+Io8gFcFl/y87+MQXPApwhNrKB7YwGH1ZDG0CQqtnLtx4B7IhlAuaOeYQJwAtp7awK7PZRGpkYzwUQ5 bodik@bodik
 # ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDB8+ZsHJO7Vw8ftTdLy1/on+U80/a8khWdEv6ePsvAtTqI2FDw6TuAZtjxqFpU7ZsXqdyWvH1bqkMwtkYjLsJ58ti4J7ubsKxpMPS7tDj88d0feR5MMrkCAAfi6BWRKwcjQ0zi/G6ulwSWsgw09YPh/3ndLBDtixAm9mbYB6W3VOsv+nBjz6snbBgK+OzrPv+79SM1yOgfuBaQAOyA95GKUp7UWFZLcdnzewEnRPa6EL2Y7wKQzj5zUqpNYwvtbMUokQImO69vTi/i5RrBJYwiPOQLN8V1rG8G+udt60UygsFj+TkE/QnIvyCPhnhoSnzu9ty8uwoXw2ZYpOfQgJeF kostenec@cesnet.cz
