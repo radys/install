@@ -101,8 +101,8 @@ chroot /mnt /bin/bash -c "
   update-grub
 "
 
-mkdir -p /mnt/scripts
-cat <<EOF> /mnt/scripts/init.sh
+mkdir -p /data/scripts
+cat <<EOF> /data/scripts/init.sh
 #!/bin/bash
 
 mkdir -p /root/.ssh
@@ -116,7 +116,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVCK8YH1W/Bivlp7LeW9XSXlcFBi3R1hcxC8sCHpqB
 EEOF
 EOF
 
-chmod +x /mnt/scripts/init.sh
+chmod +x /data/scripts/init.sh
 
 mkdir -p /mnt/root/.ssh
 cat << EOF > /mnt/root/.ssh/authorized_keys
