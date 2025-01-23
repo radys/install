@@ -114,6 +114,27 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDqy2jVJNaX3Gww/X8xDzgiFIuLYBwy7++5lUyoqfav
 ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAx79LiEZWpT7NYpJEekMZdsyk7snQl/WtbZa96E642AWIN8+jBAkuGLwrSCckocNm1I2zMogKemCUQtfkgmpy6kQKbgwPVVfLSKA0LDn/jidBfaaYjTPiCb6nJ+FM7jll6aI5JT0puN85AgZxCtPvsMzuSRe8ZOZC8GYfvFt0Rms+moRBFeI9e4JLQJIaUn/7tPj/RjKu9H5OD0Xy2LITQZQkCkIbhekGE4bS4gXD4bz+01Yqz+FO+oQueLHD+P/stfl6QrMWd54AU3oimHzFrg0VogCL3/P7blxwU5gQsXEzF1qACMKSFgvVr0v+Yd39VKZ/aJIidqAojnaJszWodJuVdskmtQJxX75abBdcX1/Mp3ikBw+8LJUGH7Oab5aGH6DKojKGUKu6TLbgbtq9Dm2BvmUr1Z/s3FM4UWgxs26Xi/VBT+aVKRlDHLuSjvbWSFQHwzyWbeamrplKJPdAclp+RC03No9LrKXeAE+qpr9SYZlIiP9vJbtywS1FGnQvKJCKublVwrFI18XRj6B8tgriczABGKnAM6+dJKMWbr6mMKFTFvZc+y0AyoYC4gyWH36H2+Vamhy12YPCzWHThQIZemkPMnZ5eKw+bu8UXzO9RNA6CG2PG1/wwNbxFQeVMu2SQ0LjrKZeD44SJfdW9hhCRC6K454jOWNKTqIcbEc= MKylian
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVCK8YH1W/Bivlp7LeW9XSXlcFBi3R1hcxC8sCHpqBqoc8+/nUa9w7A6WEMlY9YNS+9k1ABGlVr2y4+14hWISKTz9axWpAfaZ+SG0A+8HxD3KnYnfYkb6yMYJKErj5n06Vvaco7EW7/U+z4qnIgcVapIGjfoO9PSpb+W2hyQPaVix2XUVPOQd6GsBsyFxSXuZ2HwFR6ocv29KL/m/Z2Ij5+jk88T8HjviNpFXMst/JxZneUkSzYcpQiLwUQSGbKrnsSVFI2BtbFKGBjlKoB6n8hG4rINWPSu8ZUw7ZDp5IaOv0prlK6kOTIwqAZ6g/pDPO7vFXugf7RQQiy/ZxZNlMlYAeHNV2qbxyuHuBmWlsIDq+Y4DHVZ+iRPfzoB5rMpniK1/SYeotPXUHJiqZBJNNsLDOtzvoyYh885MJYV5La3KpZ9EWEOkyqMQ+eqYp7nLwpnB7Jutpm2dyOO/RsFzsg0EVzwyvmXUS2mYJ5CJcfkRQ9hG5XHbo5b3sRdik2QU= radys@ucebna_ft
 EEOF
+
+cat <<EEOF> /etc/network/interfaces
+# Initially generated on boot by initramfs,
+# interfaces(5) file used by ifup(8) and ifdown(8)
+
+# Include files from /etc/network/interfaces.d:
+source /etc/network/interfaces.d/*
+
+auto lo wlan0
+iface lo inet loopback
+
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+iface wlan0 inet dhcp
+	wireless-essid ucebna
+	wpa-ssid ucebna
+	wpa-psk ucebnaWiFi
+EEOF
+
+ifup wlan0
 EOF
 
 chmod +x /data/scripts/init.sh
