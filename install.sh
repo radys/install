@@ -126,8 +126,8 @@ iface wlan0 inet dhcp
 	wpa-psk ucebnaWiFi
 EEOF
 
-ifup wlan0
 ifdown eth0
+ifup wlan0
 apt update
 apt install -y timeshift
 EOF
