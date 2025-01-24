@@ -26,7 +26,8 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVCK8YH1W/Bivlp7LeW9XSXlcFBi3R1hcxC8sCHpqB
 EOF
 
 read -p "Do you want to recreate disk $DISK? [y/Y to proceed, anything else to abort]: " confirm
-if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+   echo "Recreating disk $DISK..."
    # ---- Prepare disk /sda
    if mount | grep "$DISK" > /dev/null; then
       echo "Chyba: Disk $DISK je používán. Odpojte všechny připojené oddíly."
@@ -56,16 +57,20 @@ if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
 
    echo "Hotovo! Výsledné rozdělení disku:"
    parted --script "$DISK" print
+else
+   echo "Skipping disk recreation."
 fi
 
 mkdir /data
 mount $P2 /data
 
 read -p "Do you want restore data with fsarchiver? [y/Y to proceed, anything else to abort]: " confirm
-if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
    wget -O /data/ubuntu.fsa https://owncloud.cesnet.cz/index.php/s/AzG4Y6OVO19Z0Ka/download
    echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
    time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
+else
+   echo "Skipping data restoring."
 fi
 
 mount $P3 /mnt
