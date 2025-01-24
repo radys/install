@@ -127,6 +127,7 @@ iface wlan0 inet dhcp
 EEOF
 
 ifup wlan0
+ifdown eth0
 apt update
 apt install -y timeshift
 EOF
