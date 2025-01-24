@@ -76,6 +76,7 @@ time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
 
 mount $P3 /mnt
 
+mkdir -p /mnt/home/data
 mkdir -p /mnt/boot/efi
 mount $P1 /mnt/boot/efi
 #ls -al  /mnt/boot/
@@ -158,6 +159,7 @@ EOF
 
 cat << EOF > /mnt/etc/fstab
 $P3 / ext4 defaults 0 1
+$P2 /home/data ext4 defaults 0 1
 $P1 /boot/efi vfat defaults 0 1
 /swap.img none swap sw 0 0
 EOF
