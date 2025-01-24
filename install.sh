@@ -4,6 +4,11 @@
 # https://ces.net/install
 # https://ces.net/ubuntu
 
+DISK="/dev/nvme0n1"
+P1="${DISK}p1"
+P2="${DISK}p2"
+P3="${DISK}p3"
+
 # GRML SSH server:
 service ssh start
 
@@ -20,68 +25,54 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAx79LiEZWpT7NYpJEekMZdsyk7snQl/WtbZa96E642AWI
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDVCK8YH1W/Bivlp7LeW9XSXlcFBi3R1hcxC8sCHpqBqoc8+/nUa9w7A6WEMlY9YNS+9k1ABGlVr2y4+14hWISKTz9axWpAfaZ+SG0A+8HxD3KnYnfYkb6yMYJKErj5n06Vvaco7EW7/U+z4qnIgcVapIGjfoO9PSpb+W2hyQPaVix2XUVPOQd6GsBsyFxSXuZ2HwFR6ocv29KL/m/Z2Ij5+jk88T8HjviNpFXMst/JxZneUkSzYcpQiLwUQSGbKrnsSVFI2BtbFKGBjlKoB6n8hG4rINWPSu8ZUw7ZDp5IaOv0prlK6kOTIwqAZ6g/pDPO7vFXugf7RQQiy/ZxZNlMlYAeHNV2qbxyuHuBmWlsIDq+Y4DHVZ+iRPfzoB5rMpniK1/SYeotPXUHJiqZBJNNsLDOtzvoyYh885MJYV5La3KpZ9EWEOkyqMQ+eqYp7nLwpnB7Jutpm2dyOO/RsFzsg0EVzwyvmXUS2mYJ5CJcfkRQ9hG5XHbo5b3sRdik2QU= radys@ucebna_ft
 EOF
 
-read -p "Do you want to continue? [y/Y to proceed, anything else to abort]: " confirm
+read -p "Do you want to recreate disk $DISK? [y/Y to proceed, anything else to abort]: " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-    echo "Operation aborted."
-    exit 1
+   # ---- Prepare disk /sda
+   if mount | grep "$DISK" > /dev/null; then
+      echo "Chyba: Disk $DISK je používán. Odpojte všechny připojené oddíly."
+      exit 1
+   fi
+
+   echo "Odpojuji připojené oddíly..."
+   for PART in $(lsblk -ln -o NAME "$DISK" | grep -E "^$(basename "$DISK")" | sed "s|^|/dev/|"); do
+      umount "$PART" 2>/dev/null || true
+   done
+
+   parted --script "$DISK" mklabel gpt
+
+   echo "Vytvářím EFI boot oddíl..."
+   parted --script "$DISK" mkpart primary fat32 1MiB 1GiB
+   parted --script "$DISK" set 1 esp on
+
+   echo "Vytvářím Linuxový oddíl (root)..."
+   parted --script "$DISK" mkpart primary ext4 1GiB 200GiB
+
+   echo "Vytvářím Linuxový oddíl pro data..."
+   parted --script "$DISK" mkpart primary ext4 200GiB 100%
+
+   mkfs.fat -F32 $P1
+   mkfs.ext4 $P2
+   mkfs.ext4 $P3
+
+   echo "Hotovo! Výsledné rozdělení disku:"
+   parted --script "$DISK" print
 fi
-
-read -p "Do you want to continue? [y/Y to proceed, anything else to abort]: " confirm
-if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-    echo "Operation aborted."
-    exit 1
-fi
-
-# ---- Prepare disk /sda
-
-DISK="/dev/nvme0n1"
-P1="${DISK}p1"
-P2="${DISK}p2"
-P3="${DISK}p3"
-
-if mount | grep "$DISK" > /dev/null; then
-    echo "Chyba: Disk $DISK je používán. Odpojte všechny připojené oddíly."
-    exit 1
-fi
-
-echo "Odpojuji připojené oddíly..."
-for PART in $(lsblk -ln -o NAME "$DISK" | grep -E "^$(basename "$DISK")" | sed "s|^|/dev/|"); do
-    umount "$PART" 2>/dev/null || true
-done
-
-parted --script "$DISK" mklabel gpt
-
-echo "Vytvářím EFI boot oddíl..."
-parted --script "$DISK" mkpart primary fat32 1MiB 1GiB
-parted --script "$DISK" set 1 esp on
-
-echo "Vytvářím Linuxový oddíl (root)..."
-parted --script "$DISK" mkpart primary ext4 1GiB 200GiB
-
-echo "Vytvářím Linuxový oddíl pro data..."
-parted --script "$DISK" mkpart primary ext4 200GiB 100%
-
-mkfs.fat -F32 $P1
-mkfs.ext4 $P2
-mkfs.ext4 $P3
-
-echo "Hotovo! Výsledné rozdělení disku:"
-parted --script "$DISK" print
 
 mkdir /data
 mount $P2 /data
-wget -O /data/ubuntu.fsa https://owncloud.cesnet.cz/index.php/s/AzG4Y6OVO19Z0Ka/download
-echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
-time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
+
+read -p "Do you want restore data with fsarchiver? [y/Y to proceed, anything else to abort]: " confirm
+if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+   wget -O /data/ubuntu.fsa https://owncloud.cesnet.cz/index.php/s/AzG4Y6OVO19Z0Ka/download
+   echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
+   time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
+fi
 
 mount $P3 /mnt
-
 mkdir -p /mnt/home/data
+rm -rf /mnt/boot/efi
 mkdir -p /mnt/boot/efi
 mount $P1 /mnt/boot/efi
-#ls -al  /mnt/boot/
-#ls -al  /mnt/boot/efi/
-
 mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
@@ -89,7 +80,6 @@ mount --bind /sys /mnt/sys
 chroot /mnt /bin/bash -c 'apt update ; apt install -y net-tools open-vm-tools fail2ban vim mc timeshift openssh-server dbus-x11; apt upgrade -y ; apt autoremove -y'
 chroot /mnt /bin/bash -c 'systemctl enable ssh'
 chroot /mnt /bin/bash -c 'ufw allow ssh'
-
 #chroot /mnt /bin/bash -c 'grub-install'
 chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB'
 chroot /mnt /bin/bash -c 'update-grub'
