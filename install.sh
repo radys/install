@@ -88,6 +88,13 @@ mount --bind /sys /mnt/sys
 chroot /mnt /bin/bash -c 'apt update ; apt install -y net-tools open-vm-tools fail2ban vim mc timeshift openssh-server ; apt upgrade -y ; apt autoremove -y'
 chroot /mnt /bin/bash -c 'systemctl enable ssh'
 chroot /mnt /bin/bash -c 'ufw allow ssh'
+
+chroot /mnt /bin/bash -c "
+  gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
+  gsettings set org.gnome.desktop.media-handling automount false
+  gsettings set org.gnome.desktop.media-handling automount-open false 
+"
+
 #chroot /mnt /bin/bash -c 'grub-install'
 chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB'
 chroot /mnt /bin/bash -c 'update-grub'
