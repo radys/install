@@ -137,6 +137,8 @@ iface wlan0 inet dhcp
 EEOF
 
 ifup wlan0
+apt update
+apt install -y timeshift
 EOF
 
 chmod +x /data/scripts/init.sh
