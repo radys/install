@@ -45,8 +45,8 @@ if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
    parted --script "$DISK" mkpart primary ext4 200GiB 100%
 
    mkfs.fat -F32 $P1
-   mkfs.ext4 $P2
-   mkfs.ext4 $P3
+   mkfs.ext4 -F $P2
+   mkfs.ext4 -F $P3
 
    echo "Hotovo! Výsledné rozdělení disku:"
    parted --script "$DISK" print
