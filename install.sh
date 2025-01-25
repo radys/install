@@ -18,7 +18,7 @@ systemctl daemon-reload
 mkdir /root/.ssh
 wget -O /root/.ssh/authorized_keys https://raw.githubusercontent.com/radys/install/refs/heads/main/authorized_keys
 
-read -p "Do you want to recreate disk $DISK? [y/Y to proceed, anything else to abort]: " confirm
+read -p "Do you want to recreate disk $DISK? [y/N to proceed, anything else to abort]: " confirm
 if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
    echo "Recreating disk $DISK..."
    # ---- Prepare disk /sda
@@ -59,7 +59,7 @@ fi
 mkdir /data
 mount $P2 /data
 
-read -p "Do you want restore data with fsarchiver? [y/Y to proceed, anything else to abort]: " confirm
+read -p "Do you want restore data with fsarchiver? [y/N to proceed, anything else to abort]: " confirm
 if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
    wget -O /data/ubuntu.fsa https://owncloud.cesnet.cz/index.php/s/AzG4Y6OVO19Z0Ka/download
    echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
