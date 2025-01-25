@@ -89,7 +89,7 @@ chroot /mnt /bin/bash -c "
   sed -i 's/GRUB_TIMEOUT_STYLE=hidden/GRUB_TIMEOUT_STYLE=countdown/g' /etc/default/grub
   sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=5/g' /etc/default/grub
   echo 'CUSTOM_BOOTOPTIONS=\"ssh toram myconfig=$P2 scripts=init.sh\"' >> /etc/default/grml-rescueboot
-  update-grml-rescueboot
+  update-grml-rescueboot -f
   update-grub
 "
 # Configure all in grml and save config to load in booting
@@ -174,4 +174,6 @@ cat << EOF > /mnt/etc/timeshift/timeshift.json
 EOF
 
 #umount -R /mnt
+echo "Kontrola GRML stazeni iso souboru:"
+ls -al /mnt/boot/grml/
 echo "Instalace dokončena."
