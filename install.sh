@@ -77,7 +77,7 @@ mount --bind /dev /mnt/dev
 mount --bind /proc /mnt/proc
 mount --bind /sys /mnt/sys
 
-chroot /mnt /bin/bash -c 'apt update ; apt install -y net-tools open-vm-tools fail2ban vim mc timeshift openssh-server dbus-x11; apt upgrade -y ; apt autoremove -y'
+chroot /mnt /bin/bash -c 'apt update ; apt install -y net-tools open-vm-tools fail2ban vim mc timeshift openssh-server dbus-x11 udpcast; apt upgrade -y ; apt autoremove -y'
 chroot /mnt /bin/bash -c 'systemctl enable ssh'
 chroot /mnt /bin/bash -c 'ufw allow ssh'
 #chroot /mnt /bin/bash -c 'grub-install'
