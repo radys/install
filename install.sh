@@ -131,9 +131,16 @@ cat <<EOF> /data/scripts/init.sh
 # 	wpa-psk ucebnaWiFi
 # EEOF
 
-# ifup wlan0
+# mount /dev/nvme0n1p2 /mnt
+# save-config -all -file /mnt/scripts/config.tbz
+# umount /mnt
+# echo 'CUSTOM_BOOTOPTIONS=\"ssh toram myconfig=$P2 scripts=init.sh\"' >> /etc/default/grml-rescueboot
+
 apt update
 apt install -y timeshift
+ifdown wlan0
+ifdown eth0
+ifup wlan0
 EOF
 
 chmod +x /data/scripts/init.sh
