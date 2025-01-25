@@ -90,14 +90,12 @@ chroot /mnt /bin/bash -c "
   update-grml-rescueboot
   update-grub
 "
-
-mkdir -p /data/scripts
-
 # Configure all in grml and save config to load in booting
 # mount /dev/nvme0n1p2 /data
 # save-config -all -file /data/scripts/config.tbz
 # umount /data
 # ... echo 'CUSTOM_BOOTOPTIONS=\"ssh toram myconfig=$P2 scripts=init.sh\"' >> /etc/default/grml-rescueboot
+mkdir -p /data/scripts
 wget -O /data/scripts/config.tbz https://raw.githubusercontent.com/radys/install/refs/heads/main/config.tbz
 wget -O /data/scripts/init.sh https://raw.githubusercontent.com/radys/install/refs/heads/main/init.sh
 chmod +x /data/scripts/init.sh
