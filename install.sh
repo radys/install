@@ -50,6 +50,8 @@ if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
 
    echo "Hotovo! Výsledné rozdělení disku:"
    parted --script "$DISK" print
+
+   systemctl daemon-reload
 else
    echo "Skipping disk recreation."
 fi
