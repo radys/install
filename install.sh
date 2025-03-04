@@ -93,7 +93,7 @@ chroot /mnt /bin/bash -c "
   update-grub
 "
 # Configure all in grml and save config to load in booting
-# mount /dev/nvme0n1p2 /data
+# mount $P2 /data
 # save-config -all -file /data/scripts/config.tbz
 # umount /data
 # ... echo 'CUSTOM_BOOTOPTIONS=\"ssh toram myconfig=$P2 scripts=init.sh\"' >> /etc/default/grml-rescueboot
@@ -141,7 +141,7 @@ EOF
 
 chmod 600 /mnt/etc/NetworkManager/system-connections/ucebna.nmconnection
 
-UUIDP2=$(blkid -s UUID -o value /dev/nvme0n1p2)
+UUIDP2=$(blkid -s UUID -o value $P2)
 cat << EOF > /mnt/etc/timeshift/timeshift.json 
 {
   "backup_device_uuid" : "$UUIDP2",
