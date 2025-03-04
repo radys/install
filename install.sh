@@ -4,10 +4,13 @@
 # https://ces.net/install
 # https://ces.net/ubuntu
 
-DISK="/dev/nvme0n1"
-P1="${DISK}p1"
-P2="${DISK}p2"
-P3="${DISK}p3"
+#DATA="200GiB"
+#DISK="/dev/nvme0n1p"
+DATA="100GiB"
+DISK="/dev/sda"
+P1="${DISK}1"
+P2="${DISK}2"
+P3="${DISK}3"
 
 # GRML SSH server:
 service ssh start
@@ -39,10 +42,10 @@ if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
    parted --script "$DISK" set 1 esp on
 
    echo "Vytvářím Linuxový oddíl (root)..."
-   parted --script "$DISK" mkpart primary ext4 1GiB 200GiB
+   parted --script "$DISK" mkpart primary ext4 1GiB $DATA
 
    echo "Vytvářím Linuxový oddíl pro data..."
-   parted --script "$DISK" mkpart primary ext4 200GiB 100%
+   parted --script "$DISK" mkpart primary ext4 $DATA 100%
 
    mkfs.fat -F32 $P1
    mkfs.ext4 -F $P2
