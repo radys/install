@@ -4,6 +4,7 @@
 # https://ces.net/install
 # https://ces.net/ubuntu
 
+PASSWORD="-"
 #DATA="200GiB"
 #DISK="/dev/nvme0n1p"
 DATA="100GiB"
@@ -66,7 +67,7 @@ read -p "Do you want restore data with fsarchiver? [y/N to proceed, anything els
 if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
    wget -O /data/ubuntu.fsa https://owncloud.cesnet.cz/index.php/s/AzG4Y6OVO19Z0Ka/download
    echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
-   time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -
+   time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c $PASSWORD
 else
    echo "Skipping data restoring."
 fi
