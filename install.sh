@@ -84,8 +84,8 @@ mount --bind /sys /mnt/sys
 chroot /mnt /bin/bash -c 'apt update ; apt install -y net-tools open-vm-tools fail2ban vim mc timeshift openssh-server dbus-x11 udpcast; apt upgrade -y ; apt autoremove -y'
 chroot /mnt /bin/bash -c 'systemctl enable ssh'
 chroot /mnt /bin/bash -c 'ufw allow ssh'
-#chroot /mnt /bin/bash -c 'grub-install'
 chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB'
+#chroot /mnt /bin/bash -c 'grub-install'
 chroot /mnt /bin/bash -c 'update-grub'
 
 chroot /mnt /bin/bash -c "
