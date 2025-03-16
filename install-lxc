@@ -1,0 +1,36 @@
+locale-gen en_US.UTF-8 cs_CZ.UTF-8
+update-locale LANG=en_US.UTF-8
+
+apt update && apt upgrade
+apt install -y ubuntu-desktop vim mc net-tools xrdp -y
+
+USERNAME="flab"
+useradd -m -s /bin/bash $USERNAME && echo "$USERNAME:flabflab" | chpasswd && usermod -aG sudo flab
+echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"$USERNAME"
+chmod 0440 /etc/sudoers.d/"$USERNAME"
+sed -i 's/^AutomaticLoginEnable=true/AutomaticLoginEnable=false/' /etc/gdm3/custom.conf
+sed -i 's/#WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/custom.conf
+sed -i 's/new_cursors=true/new_cursors=false/' /etc/xrdp/xrdp.ini
+
+cat << EOF > /etc/xrdp/startwm.sh
+#!/bin/sh
+
+export GNOME_SHELL_SESSION_MODE=ubuntu
+export XDG_CURRENT_DESKTOP=ubuntu:GNOME
+
+if test -r /etc/profile; then
+            . /etc/profile
+fi
+
+test -x /etc/X11/Xsession && exec /etc/X11/Xsession
+exec /bin/sh /etc/X11/Xsession
+EOF
+
+chmod +x /etc/xrdp/startwm.sh
+
+cat << EOF > /etc/X11/Xwrapper.config
+needs_root_rights=no
+allowed_users=anybody
+EOF
+
+chmod 660 /etc/X11/Xwrapper.config
