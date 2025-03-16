@@ -1,8 +1,8 @@
 locale-gen en_US.UTF-8 cs_CZ.UTF-8
 update-locale LANG=en_US.UTF-8
 
-apt update && apt upgrade
-apt install -y ubuntu-desktop vim mc net-tools xrdp -y
+apt update && apt upgrade -y
+apt install -y ubuntu-desktop vim mc net-tools xrdp
 
 USERNAME="flab"
 useradd -m -s /bin/bash $USERNAME && echo "$USERNAME:flabflab" | chpasswd && usermod -aG sudo flab
