@@ -32,28 +32,28 @@ if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
       exit 1
    fi
 
-   echo "Odpojuji připojené oddíly..."
+   echo "Unmounting mounted partitions..."
    for PART in $(lsblk -ln -o NAME "$DISK" | grep -E "^$(basename "$DISK")" | sed "s|^|/dev/|"); do
       umount "$PART" 2>/dev/null || true
    done
 
    parted --script "$DISK" mklabel gpt
 
-   echo "Vytvářím EFI boot oddíl..."
+   echo "Creating EFI boot partition..."
    parted --script "$DISK" mkpart primary fat32 1MiB 1GiB
    parted --script "$DISK" set 1 esp on
 
-   echo "Vytvářím Linuxový oddíl (root)..."
+   echo "Creating Linux partition (root)..."
    parted --script "$DISK" mkpart primary ext4 1GiB $DATA
 
-   echo "Vytvářím Linuxový oddíl pro data..."
+   echo "Creating Linux data partition..."
    parted --script "$DISK" mkpart primary ext4 $DATA 100%
 
    mkfs.fat -F32 $P1
    mkfs.ext4 -F $P2
    mkfs.ext4 -F $P3
 
-   echo "Hotovo! Výsledné rozdělení disku:"
+   echo "Done! Final disk layout:"
    parted --script "$DISK" print
 
    systemctl daemon-reload
@@ -179,6 +179,6 @@ cat << EOF > /mnt/etc/timeshift/timeshift.json
 EOF
 
 #umount -R /mnt
-echo "Kontrola GRML stazeni iso souboru:"
+echo "Checking GRML ISO file download:"
 ls -al /mnt/boot/grml/
 echo "Instalace dokončena."
