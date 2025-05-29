@@ -182,3 +182,5 @@ EOF
 echo "Checking GRML ISO file download:"
 ls -al /mnt/boot/grml/
 echo "Instalace dokončena."
+
+# timeshift --create --comments "init"
