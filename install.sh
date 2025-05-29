@@ -5,10 +5,10 @@
 # https://ces.net/ubuntu
 
 PASSWORD="-"
-#DATA="200GiB"
-#DISK="/dev/nvme0n1p"
-DATA="100GiB"
-DISK="/dev/sda"
+DATA="200GiB"
+DISK="/dev/nvme0n1p"
+#DATA="100GiB"
+#DISK="/dev/sda"
 P1="${DISK}1"
 P2="${DISK}2"
 P3="${DISK}3"
@@ -65,7 +65,7 @@ mount $P2 /data
 
 read -p "Do you want restore data with fsarchiver? [y/N to proceed, anything else to abort]: " confirm
 if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
-   wget -O /data/ubuntu.fsa https://owncloud.cesnet.cz/index.php/s/AzG4Y6OVO19Z0Ka/download
+   [ -f /data/ubuntu.fsa ] || wget -O /data/ubuntu.fsa https://owncloud.cesnet.cz/index.php/s/AzG4Y6OVO19Z0Ka/download
    echo "time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c -"
    time fsarchiver restfs /data/ubuntu.fsa id=0,dest=$P3 -c $PASSWORD
 else
