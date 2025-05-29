@@ -22,7 +22,8 @@ systemctl daemon-reload
 mkdir /root/.ssh
 wget -O /root/.ssh/authorized_keys https://raw.githubusercontent.com/radys/install/refs/heads/main/authorized_keys
 
-read -p "Do you want to recreate disk $DISK? [y/N to proceed, anything else to abort]: " confirm
+###read -p "Do you want to recreate disk $DISK? [y/N to proceed, anything else to abort]: " confirm
+confirm=${confirm:-n}
 if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
    echo "Recreating disk $DISK..."
    # ---- Prepare disk /sda
