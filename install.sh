@@ -94,6 +94,7 @@ chroot /mnt /bin/bash -c "
   sed -i 's/GRUB_TIMEOUT_STYLE=hidden/GRUB_TIMEOUT_STYLE=countdown/g' /etc/default/grub
   sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=5/g' /etc/default/grub
   echo 'CUSTOM_BOOTOPTIONS=\"ssh toram myconfig=$P2 scripts=init.sh\"' >> /etc/default/grml-rescueboot
+  cd /boot/grml ; wget https://mirror.alwyzon.net/grml/grml-full-2025.05-amd64.iso
   update-grml-rescueboot -f
   update-grub
 "
@@ -181,7 +182,7 @@ EOF
 #umount -R /mnt
 echo "Checking GRML ISO file download:"
 ls -al /mnt/boot/grml/
-echo "Instalace dokončena."
+echo "Installation completed.""
 
 # timeshift --create --comments "init"
 # expect -c 'spawn sudo timeshift --restore; expect "Enter snapshot number" {send "0\r"}; expect "Press ENTER to continue" {send "\r"}; expect "Re-install GRUB2 bootloader?" {send "y\r"}; expect "Enter device name or number" {send "\r"}; expect "Do you want to continue?" {send "y\r"}; expect "Continue with restore?" {send "y\r"}; interact'
